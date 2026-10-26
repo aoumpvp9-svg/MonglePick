@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>몽글픽 (Mongle Pick) 🎀 - 귀여운 무작위 추첨기</title>
+  <meta name="description" content="이름, 메뉴, 팀원 등 무엇이든 공정하고 귀엽게 뽑아주는 무작위 추첨 웹 서비스 몽글픽!">
+  
+  <!-- Google Fonts: Gowun Dodum & Gaegu for cute pastel Korean typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Gowun+Dodum&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Floating background decorations -->
+  <div class="bg-decorations" aria-hidden="true">
+    <span class="floating-item star s1">✨</span>
+    <span class="floating-item heart h1">💖</span>
+    <span class="floating-item star s2">⭐</span>
+    <span class="floating-item heart h2">🌸</span>
+    <span class="floating-item star s3">✨</span>
+    <span class="floating-item heart h3">🎀</span>
+    <span class="floating-item star s4">💫</span>
+    <span class="floating-item heart h4">🍬</span>
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+    <div class="cloud cloud-3"></div>
+  </div>
+
+  <!-- Confetti Canvas -->
+  <canvas id="confettiCanvas" class="confetti-canvas"></canvas>
+
+  <div class="app-container">
+    <!-- Header / Logo -->
+    <header class="app-header">
+      <div class="logo-badge">
+        <span class="logo-sparkle">✨</span>
+        <span class="logo-tag">LUCKY RANDOM PICKER</span>
+        <span class="logo-sparkle">✨</span>
+      </div>
+      <h1 class="logo-title">
+        <span class="title-decor">🎀</span>
+        <span class="title-text">몽글픽</span>
+        <span class="title-sub">Mongle Pick</span>
+      </h1>
+      <p class="logo-desc">메뉴, 벌칙, 팀원 뽑기! 몽글이가 공정하고 귀엽게 쏙 뽑아줄게요 🐾</p>
+      
+      <!-- Top Action Controls (Sound toggle, Quick presets) -->
+      <div class="top-controls">
+        <button id="soundToggleBtn" class="pill-btn sound-btn" title="효과음 켜기/끄기" aria-label="효과음 토글">
+          <span class="btn-icon" id="soundIcon">🔔</span>
+          <span class="btn-label" id="soundLabel">효과음 ON</span>
+        </button>
+        <button id="helpBtn" class="pill-btn help-btn" title="사용 방법">
+          <span class="btn-icon">💡</span>
+          <span class="btn-label">이용 팁</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Mascot Stage -->
+    <section class="mascot-section" aria-label="마스코트 몽글이">
+      <div class="mascot-wrapper">
+        <!-- Dynamic Speech Bubble -->
+        <div class="speech-bubble" id="speechBubble">
+          <p id="mascotMessage">안녕! 오늘은 무엇을 뽑아볼까? 항목을 추가해 줘! ✨</p>
+          <div class="bubble-arrow"></div>
+        </div>
+
+        <!-- Interactive SVG Mascot: Mongle the Bunny-Bear -->
+        <div class="mascot-avatar" id="mascotAvatar" role="img" aria-label="몽글이 마스코트">
+          <svg viewBox="0 0 200 210" class="mascot-svg">
+            <defs>
+              <!-- Gradients for Mascot -->
+              <radialGradient id="bodyGrad" cx="40%" cy="35%" r="65%">
+                <stop offset="0%" stop-color="#FFFFFF" />
+                <stop offset="70%" stop-color="#FFF3F8" />
+                <stop offset="100%" stop-color="#FCE1ED" />
+              </radialGradient>
+              <radialGradient id="innerEarGrad" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#FFAAC9" />
+                <stop offset="100%" stop-color="#FF7FA9" />
+              </radialGradient>
+              <radialGradient id="ribbonGrad" cx="30%" cy="30%" r="70%">
+                <stop offset="0%" stop-color="#B794F6" />
+                <stop offset="100%" stop-color="#805AD5" />
+              </radialGradient>
+              <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#b493c4" flood-opacity="0.25" />
+              </filter>
+            </defs>
+
+            <!-- Shadow -->
+            <ellipse cx="100" cy="195" rx="60" ry="12" fill="#D6C5DE" opacity="0.4" class="shadow-anim" />
+
+            <!-- Left Ear -->
+            <g class="ear left-ear">
+              <ellipse cx="60" cy="55" rx="22" ry="42" transform="rotate(-15 60 55)" fill="url(#bodyGrad)" filter="url(#softShadow)" />
+              <ellipse cx="60" cy="58" rx="12" ry="28" transform="rotate(-15 60 58)" fill="url(#innerEarGrad)" />
+            </g>
+
+            <!-- Right Ear -->
+            <g class="ear right-ear">
+              <ellipse cx="140" cy="55" rx="22" ry="42" transform="rotate(15 140 55)" fill="url(#bodyGrad)" filter="url(#softShadow)" />
+              <ellipse cx="140" cy="58" rx="12" ry="28" transform="rotate(15 140 58)" fill="url(#innerEarGrad)" />
+            </g>
+
+            <!-- Cute Ribbon on Right Ear -->
+            <g class="mascot-ribbon" transform="translate(130, 75) scale(0.65)">
+              <ellipse cx="-18" cy="0" rx="16" ry="11" fill="url(#ribbonGrad)" transform="rotate(-20 -18 0)" />
+              <ellipse cx="18" cy="0" rx="16" ry="11" fill="url(#ribbonGrad)" transform="rotate(20 18 0)" />
+              <circle cx="0" cy="0" r="8" fill="#F687B3" />
+              <circle cx="0" cy="0" r="4" fill="#FFFFFF" />
+            </g>
+
+            <!-- Body & Arms -->
+            <ellipse cx="100" cy="148" rx="55" ry="48" fill="url(#bodyGrad)" filter="url(#softShadow)" />
+            
+            <!-- Left Arm / Paw -->
+            <g class="paw left-paw">
+              <ellipse cx="50" cy="150" rx="14" ry="18" transform="rotate(20 50 150)" fill="url(#bodyGrad)" />
+              <circle cx="49" cy="154" r="5" fill="#FFAAC9" />
+            </g>
+            <!-- Right Arm / Paw -->
+            <g class="paw right-paw">
+              <ellipse cx="150" cy="150" rx="14" ry="18" transform="rotate(-20 150 150)" fill="url(#bodyGrad)" />
+              <circle cx="151" cy="154" r="5" fill="#FFAAC9" />
+            </g>
+
+            <!-- Head -->
+            <ellipse cx="100" cy="105" rx="58" ry="50" fill="url(#bodyGrad)" filter="url(#softShadow)" />
+
+            <!-- Blushing Cheeks -->
+            <ellipse cx="62" cy="120" rx="12" ry="7" fill="#FF8FB1" opacity="0.65" class="cheek left-cheek" />
+            <ellipse cx="138" cy="120" rx="12" ry="7" fill="#FF8FB1" opacity="0.65" class="cheek right-cheek" />
+
+            <!-- Eyes & Expressions -->
+            <!-- 1. Normal Eyes -->
+            <g class="eyes eye-normal">
+              <circle cx="76" cy="105" r="7.5" fill="#3A2E39" />
+              <circle cx="74" cy="102" r="3" fill="#FFFFFF" />
+              <circle cx="78" cy="107" r="1.5" fill="#FFFFFF" />
+
+              <circle cx="124" cy="105" r="7.5" fill="#3A2E39" />
+              <circle cx="122" cy="102" r="3" fill="#FFFFFF" />
+              <circle cx="126" cy="107" r="1.5" fill="#FFFFFF" />
+            </g>
+
+            <!-- 2. Rolling Eyes (Sparkle/Star Eyes) -->
+            <g class="eyes eye-rolling" style="display: none;">
+              <!-- Left Star Eye -->
+              <path d="M 76,95 L 79,103 L 87,105 L 80,109 L 81,117 L 76,112 L 71,117 L 72,109 L 65,105 L 73,103 Z" fill="#F6AD55" stroke="#ED8936" stroke-width="1.5" />
+              <!-- Right Star Eye -->
+              <path d="M 124,95 L 127,103 L 135,105 L 128,109 L 129,117 L 124,112 L 119,117 L 120,109 L 113,105 L 121,103 Z" fill="#F6AD55" stroke="#ED8936" stroke-width="1.5" />
+            </g>
+
+            <!-- 3. Happy / Winner Eyes (Happy arcs) -->
+            <g class="eyes eye-happy" style="display: none;">
+              <path d="M 68 108 Q 76 96 84 108" fill="none" stroke="#3A2E39" stroke-width="4.5" stroke-linecap="round" />
+              <path d="M 116 108 Q 124 96 132 108" fill="none" stroke="#3A2E39" stroke-width="4.5" stroke-linecap="round" />
+            </g>
+
+            <!-- Nose and Cute Smile -->
+            <g class="snout">
+              <!-- Small Soft Pink Nose -->
+              <ellipse cx="100" cy="113" rx="5" ry="3.5" fill="#E53E3E" />
+              <!-- Mouth Normal -->
+              <path class="mouth mouth-normal" d="M 94 117 Q 100 123 100 117 Q 100 123 106 117" fill="none" stroke="#3A2E39" stroke-width="3" stroke-linecap="round" />
+              <!-- Mouth Open (Rolling / Excited) -->
+              <path class="mouth mouth-open" d="M 92 117 Q 100 130 108 117 Z" fill="#FF6B8B" stroke="#3A2E39" stroke-width="2.5" style="display: none;" />
+            </g>
+
+            <!-- Small Chest Heart -->
+            <path d="M 100 150 C 97 145, 90 145, 90 152 C 90 157, 100 165, 100 165 C 100 165, 110 157, 110 152 C 110 145, 103 145, 100 150 Z" fill="#FFAAC9" opacity="0.8" />
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- Preset Quick Samples -->
+    <div class="preset-section">
+      <span class="preset-label">🎀 추천 세트 불러오기:</span>
+      <div class="preset-chips">
+        <button type="button" class="preset-btn" data-preset="lunch">🍱 오늘 점심 뭐 먹지?</button>
+        <button type="button" class="preset-btn" data-preset="snack">☕ 카페 & 디저트</button>
+        <button type="button" class="preset-btn" data-preset="presenter">🎤 발표자 & 순서 정하기</button>
+        <button type="button" class="preset-btn" data-preset="penalty">⚡ 꿀잼 벌칙 뽑기</button>
+      </div>
+    </div>
+
+    <!-- Main Content Layout (2-Column Grid on Desktop, 1-Column on Mobile) -->
+    <main class="main-layout">
+      
+      <!-- Left Column: Input, List, and Settings -->
+      <div class="column-left">
+
+        <!-- Card 1: Add Item Card -->
+        <section class="card input-card" aria-labelledby="inputSectionTitle">
+          <div class="card-header">
+            <h2 id="inputSectionTitle" class="card-title">
+              <span class="card-icon">✏️</span> 항목 등록하기
+            </h2>
+            <button id="bulkModalOpenBtn" class="pill-btn mini-btn" title="줄바꿈으로 여러 항목을 한 번에 붙여넣기">
+              📋 여러 항목 붙여넣기
+            </button>
+          </div>
+
+          <!-- Single Item Form -->
+          <form id="itemForm" class="single-input-form" onsubmit="return false;">
+            <div class="input-group">
+              <input 
+                type="text" 
+                id="itemInput" 
+                class="cute-input" 
+                placeholder="뽑을 항목을 입력하세요 (예: 피자, 마라탕, 지우...)" 
+                maxlength="50"
+                autocomplete="off"
+              >
+              <button type="submit" id="addItemBtn" class="cute-btn add-btn">
+                <span class="btn-text">추가</span>
+                <span class="btn-bubble">➕</span>
+              </button>
+            </div>
+            <div id="inputHelp" class="input-hint">Enter 키를 누르면 바로 추가돼요!</div>
+          </form>
+
+          <!-- Draw Settings Panel -->
+          <div class="settings-panel">
+            <div class="settings-title">⚙️ 추첨 옵션</div>
+            
+            <div class="settings-row">
+              <div class="setting-item">
+                <label for="pickCountSelect" class="setting-label">
+                  <span class="s-icon">🎯</span> 당첨 인원:
+                </label>
+                <div class="count-selector">
+                  <button type="button" class="count-btn" id="decCountBtn" aria-label="인원 감소">－</button>
+                  <span id="pickCountDisplay" class="count-num">1명</span>
+                  <button type="button" class="count-btn" id="incCountBtn" aria-label="인원 증가">＋</button>
+                </div>
+              </div>
+
+              <div class="setting-item toggle-item">
+                <label class="switch-label" for="excludeWinnersCheckbox">
+                  <input type="checkbox" id="excludeWinnersCheckbox" checked>
+                  <span class="custom-toggle"></span>
+                  <span class="toggle-text">당첨자는 다음 추첨에서 제외</span>
+                </label>
+              </div>
+
+              <div class="setting-item toggle-item">
+                <label class="switch-label" for="allowDuplicatesCheckbox">
+                  <input type="checkbox" id="allowDuplicatesCheckbox">
+                  <span class="custom-toggle"></span>
+                  <span class="toggle-text">중복 항목 등록 허용</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Card 2: Registered Item List Card -->
+        <section class="card list-card" aria-labelledby="listSectionTitle">
+          <div class="card-header">
+            <h2 id="listSectionTitle" class="card-title">
+              <span class="card-icon">📋</span> 등록된 후보 목록
+              <span class="items-count-badge" id="itemsCountBadge">0개</span>
+            </h2>
+            <div class="card-actions">
+              <button id="reincludeAllBtn" class="pill-btn mini-btn" title="제외된 항목을 모두 후보로 복구" style="display: none;">
+                🔄 제외 항목 복구
+              </button>
+              <button id="clearAllItemsBtn" class="pill-btn mini-btn danger-btn" title="모든 항목 삭제">
+                🗑️ 전체 삭제
+              </button>
+            </div>
+          </div>
+
+          <!-- Status Bar for candidates -->
+          <div class="candidate-status-bar" id="candidateStatusBar">
+            <div class="status-pill active-pill">
+              <span class="dot green-dot"></span>
+              <span>추첨 가능: <strong id="activeCount">0</strong>개</span>
+            </div>
+            <div class="status-pill excluded-pill">
+              <span class="dot pink-dot"></span>
+              <span>제외됨: <strong id="excludedCount">0</strong>개</span>
+            </div>
+          </div>
+
+          <!-- Scrollable Item Chips List -->
+          <div class="items-container" id="itemsContainer">
+            <!-- Empty state -->
+            <div class="empty-list-state" id="emptyListState">
+              <div class="empty-icon">🧸</div>
+              <p class="empty-text">아직 등록된 후보가 없어요!</p>
+              <p class="empty-sub">위 입력창에서 추가하거나, 상단 추천 세트를 클릭해 보세요 ✨</p>
+            </div>
+            <!-- Item Chips dynamically injected here -->
+            <div class="chips-grid" id="chipsGrid"></div>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- Right Column: Draw Action, Live Roulette Preview, Results, & History -->
+      <div class="column-right">
+        
+        <!-- Card 3: Big Lucky Draw CTA & Live Stage -->
+        <section class="card draw-card" aria-labelledby="drawSectionTitle">
+          <div class="card-header center-header">
+            <h2 id="drawSectionTitle" class="card-title accent-title">
+              <span class="card-icon">🎰</span> 몽글 추첨기
+            </h2>
+          </div>
+
+          <!-- Rolling Animation Screen / Preview -->
+          <div class="draw-stage" id="drawStage">
+            <div class="stage-particles" id="stageParticles"></div>
+
+            <!-- Rolling Slot Display -->
+            <div class="rolling-box" id="rollingBox">
+              <div class="roller-sparkle left-sparkle">✨</div>
+              <div class="rolling-content" id="rollingContent">
+                <span class="rolling-placeholder">준비 완료! 버튼을 눌러주세요 🎀</span>
+              </div>
+              <div class="roller-sparkle right-sparkle">✨</div>
+            </div>
+
+            <!-- Progress bar during 1.5s roll -->
+            <div class="roll-progress-wrapper" id="rollProgressWrapper" style="display: none;">
+              <div class="roll-progress-bar" id="rollProgressBar"></div>
+            </div>
+          </div>
+
+          <!-- Main CTA Button -->
+          <div class="cta-wrapper">
+            <button id="drawBtn" class="main-draw-btn">
+              <span class="btn-shine"></span>
+              <span class="draw-icon">🎲</span>
+              <span class="draw-btn-text">두근두근 추첨하기!</span>
+              <span class="draw-sparkles">💖</span>
+            </button>
+          </div>
+
+          <!-- Latest Result Announcement Area (Appears on Win) -->
+          <div class="result-showcase" id="resultShowcase" style="display: none;">
+            <div class="result-ribbon">
+              <span class="ribbon-icon">🎉</span>
+              <span class="ribbon-text">당첨을 축하합니다!</span>
+              <span class="ribbon-icon">🎉</span>
+            </div>
+            
+            <div class="result-cards-wrap" id="resultCardsWrap">
+              <!-- Result cards dynamically rendered here -->
+            </div>
+
+            <!-- Action buttons for results -->
+            <div class="result-actions">
+              <button id="copyResultBtn" class="cute-btn secondary-btn">
+                <span class="btn-icon">📋</span> 결과 복사하기
+              </button>
+              <button id="rerollBtn" class="cute-btn primary-btn">
+                <span class="btn-icon">🔁</span> 한 번 더 추첨하기
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Card 4: Draw History Log -->
+        <section class="card history-card" aria-labelledby="historySectionTitle">
+          <div class="card-header">
+            <h2 id="historySectionTitle" class="card-title">
+              <span class="card-icon">📜</span> 추첨 기록
+              <span class="history-count-badge" id="historyCountBadge">0회</span>
+            </h2>
+            <div class="card-actions">
+              <button id="undoLastDrawBtn" class="pill-btn mini-btn warning-btn" title="가장 최근 추첨 취소 및 복구">
+                ↩️ 마지막 추첨 취소
+              </button>
+              <button id="clearHistoryBtn" class="pill-btn mini-btn danger-btn" title="모든 추첨 기록 삭제">
+                🗑️ 기록 초기화
+              </button>
+            </div>
+          </div>
+
+          <div class="history-container" id="historyContainer">
+            <!-- Empty state -->
+            <div class="empty-history-state" id="emptyHistoryState">
+              <div class="empty-icon">🎈</div>
+              <p class="empty-text">아직 진행된 추첨 기록이 없어요.</p>
+              <p class="empty-sub">행운의 첫 번째 당첨자를 뽑아보세요!</p>
+            </div>
+
+            <!-- History list items -->
+            <div class="history-list" id="historyList"></div>
+          </div>
+        </section>
+
+      </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p class="footer-text">
+        🎀 <strong>몽글픽 (Mongle Pick)</strong> · 당신의 선택을 더 즐겁고 귀엽게 만드는 랜덤 피커
+      </p>
+      <p class="footer-sub">모든 데이터는 브라우저(localStorage)에 안전하게 자동 저장됩니다 🌸</p>
+    </footer>
+  </div>
+
+  <!-- Modal: Bulk Paste Multiple Items -->
+  <div class="modal-overlay" id="bulkModal" role="dialog" aria-modal="true" aria-labelledby="bulkModalTitle">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="bulkModalTitle" class="modal-title">📋 여러 항목 한 번에 등록하기</h3>
+        <button type="button" class="modal-close-btn" id="closeBulkModalBtn" aria-label="닫기">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-desc">
+          줄바꿈(Enter)으로 항목을 구분하여 붙여넣으세요. 빈 줄이나 불필요한 공백은 자동으로 정리돼요!
+        </p>
+        <textarea 
+          id="bulkTextarea" 
+          class="cute-textarea" 
+          placeholder="김민수&#10;이영희&#10;박지민&#10;정채원&#10;최동욱" 
+          rows="8"
+        ></textarea>
+        <div class="bulk-stats">
+          <span id="bulkCountPreview">인식된 항목: 0개</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="cute-btn secondary-btn" id="cancelBulkBtn">취소</button>
+        <button type="button" class="cute-btn primary-btn" id="confirmBulkBtn">✨ 모두 등록하기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Confirmation Dialog (for Clear All & Clear History) -->
+  <div class="modal-overlay" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle">
+    <div class="modal-box confirm-box">
+      <div class="confirm-icon" id="confirmIcon">⚠️</div>
+      <h3 id="confirmModalTitle" class="modal-title">정말 삭제하시겠습니까?</h3>
+      <p class="modal-desc" id="confirmMessage">이 작업은 취소할 수 없습니다.</p>
+      <div class="modal-footer center-footer">
+        <button type="button" class="cute-btn secondary-btn" id="confirmCancelBtn">취소</button>
+        <button type="button" class="cute-btn danger-btn" id="confirmAcceptBtn">확인하고 삭제</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
