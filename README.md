@@ -1,10 +1,14 @@
 # 몽글픽 (Mongle Pick) 🎀
 > **귀엽고 사랑스러운 무작위 추첨 웹 서비스**
 
+[![Vercel Deployment](https://img.shields.io/badge/Vercel-Live%20Demo-success?style=for-the-badge&logo=vercel&logoColor=white)](https://mongle-pick-sable.vercel.app)
 ![몽글픽 미리보기](https://img.shields.io/badge/몽글픽-MonglePick-ff85b3?style=for-the-badge&logo=sparkles&logoColor=white)
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+
+**🌐 배포 주소:** [https://mongle-pick-sable.vercel.app](https://mongle-pick-sable.vercel.app)
+
 
 ---
 
